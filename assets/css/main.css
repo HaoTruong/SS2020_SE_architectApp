@@ -43,3 +43,10 @@ html, body, .map {
   .ol-popup-closer:after {
     content: "✖";
   }
+
+  .searchBar
+  {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+  }

@@ -17,6 +17,11 @@ var map = new ol.Map({
       zoom: 5
     })
   });
+
+//Create search bar
+creatingSearchBox();
+
+//Create default pop up
 defaultPopUp();
 
 
@@ -53,6 +58,15 @@ function defaultPopUp(){
     newContent.innerHTML = name + "<br>" + table[i].Location.toString();
     map.addOverlay(overlay);
   }
+}
+
+function creatingSearchBox() {
+  //Make search box 
+  var searchBar = new ol.control.Control( {
+    element: document.getElementById("search")
+  })
+  map.addControl(searchBar);
+  //How 
 }
 
 //This is testing part for clicking pop up 
