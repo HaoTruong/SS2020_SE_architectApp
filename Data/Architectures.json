@@ -6,14 +6,56 @@
         "lon": -122.47964,
         "lat": 37.81555,
         "name": "Golden State Bridge",
-        "Location": "San Francisco" 
+        "location": "San Francisco" 
       },
       {
-        "architectureID": 1,
+        "architectureID": 2,
         "lon": -73.98618,
         "lat": 40.74856,
         "name": "Empire State Building",
-        "Location": "New York"  
+        "location": "New York"  
+      },
+      {
+        "architectureID": 2,
+        "lon": -73.98618,
+        "lat": 40.74856,
+        "name": "Empire State Building",
+        "location": "New York"  
+      },
+      {
+        "architectureID": 2,
+        "lon": -73.98618,
+        "lat": 40.74856,
+        "name": "Empire State Building",
+        "location": "New York"  
+      },
+      {
+        "architectureID": 2,
+        "lon": -73.98618,
+        "lat": 40.74856,
+        "name": "Empire State Building",
+        "location": "New York"  
+      },
+      {
+        "architectureID": 2,
+        "lon": -73.98618,
+        "lat": 40.74856,
+        "name": "Empire State Building",
+        "location": "New York"  
+      },
+      {
+        "architectureID": 2,
+        "lon": -73.98618,
+        "lat": 40.74856,
+        "name": "Empire State Building",
+        "location": "New York"  
+      },
+      {
+        "architectureID": 2,
+        "lon": -73.98618,
+        "lat": 40.74856,
+        "name": "Empire State Building",
+        "location": "New York"  
       }
     ]
   }

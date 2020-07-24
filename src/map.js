@@ -3,6 +3,18 @@ const electron = require('electron');
 const path = require('path');
 const directory = path.join(__dirname, '/../Data')
 const app  = electron.app || electron.remote.app;
+const mongoose = require('mongoose');
+require('dotenv/config');
+const Architecture = require('../Data/Models/architecture');
+//Connect to the database
+async function connectToArchitectureData() {
+  mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
+  const table = await Architecture.find(function(err, data){
+    return data;  
+  })
+  mongoose.disconnect();
+  return table;
+}
 
 //Declare a map
 var map = new ol.Map({
@@ -26,20 +38,29 @@ defaultPopUp();
 
 
 //Default pop up when the program first started
-function defaultPopUp(){
-  //Get default architectures info
-  var table;
-  db.getAll('Architectures', directory, (succ,data) => {
-    var i;
-    console.log(data);
-    table = data;
-  })
+async function defaultPopUp(){
+   // const table = await Architecture.find();
+  // console.log("Connection closed");
+  //console.log(table);
+  ///Get default architectures info
+  console.log("Connecting to DB");
+  const table = await connectToArchitectureData();
+  if (table != undefined) {
+    console.log("Connected");
+  }
+
+   //Portion of local database
+  // var table;
+  // db.getAll('default', directory, (succ,data) => {
+  //   var i;
+  //   console.log(data);
+  //   table = data;
+  // })
 
   //Adding default pop-up
   for (i=0; i<table.length;i++){
-      //Create new pop up div
+    //Create new pop up div
     var newDiv = document.createElement('div');
-    console.log("Create new div");
     newDiv.setAttribute("class", "ol-popup");
     //Create content and closer
     var newContent = document.createElement('div');
@@ -52,10 +73,9 @@ function defaultPopUp(){
     var overlay = new ol.Overlay({
       element: newDiv
     });
-    console.log(table[i].lon);
     overlay.setPosition(ol.proj.fromLonLat([table[i].lon,table[i].lat]));
     var name = table[i].name.toString();
-    newContent.innerHTML = name + "<br>" + table[i].Location.toString();
+    newContent.innerHTML = name + "<br>" + table[i].location.toString();
     map.addOverlay(overlay);
   }
 }
@@ -63,10 +83,35 @@ function defaultPopUp(){
 function creatingSearchBox() {
   //Make search box 
   var searchBar = new ol.control.Control( {
-    element: document.getElementById("search")
+    element: document.getElementById("searchBoxWrapper")
   })
   map.addControl(searchBar);
   //How 
+}
+
+//Search box click function (show list of entities when user click on search bar)
+function searching() {
+  var elem = $(".result");
+  var i
+  // for (i=0; i<elem.length; i++) {
+  //   $(elem[i]).show();
+  // }
+  // elem[0].innerHTML = "Hello";
+  var table;
+  db.getField('Architectures', directory, 'name', (succ,data) => {
+    var i;
+    table = data;
+    console.log("list of architectures name"+ table);
+    var searchResults = document.getElementsByClassName("searchResults");
+    if (searchResults[0].childElementCount == 0) {
+      for (i in table) {
+        let li = document.createElement('li');
+        li.innerHTML = table[i];
+        li.setAttribute("class", "result");
+        searchResults[0].appendChild(li);
+      }
+    }
+  })
 }
 
 //This is testing part for clicking pop up 

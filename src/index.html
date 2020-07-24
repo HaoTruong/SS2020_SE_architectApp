@@ -17,11 +17,18 @@
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
     </div> -->
-    <div id= "search" class="searchBar">
-      <div class="search-container">
-          <form id="searchForm">
-              <input onclick="searching()" type="search" id="searchInput" placeholder="Search..." />
-          </form>   
+    <div id=searchBoxWrapper class="wrapper">
+      <select name="category" id="categoryFilter">
+        <option value="Architecture">Architecture</option>
+        <option value="Architect">Architect</option>
+      </select>
+      <div id= "search" class="searchBar">
+        <div class="search-container">
+            <input onclick="searching()" type="search" id="searchInput" placeholder="Search..." />
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="searchResults">
+        </div>
       </div>
     </div>
     <script src="../libs/v6.3.1-dist/ol.js"></script>
