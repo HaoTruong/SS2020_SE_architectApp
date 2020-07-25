@@ -24,7 +24,7 @@
       </select>
       <div id= "search" class="searchBar">
         <div class="search-container">
-            <input onclick="searching()" type="search" id="searchInput" placeholder="Search..." />
+            <input onclick="searching()" onkeyup="searchFilter()" type="search" id="searchInput" placeholder="Search..." />
             <i class="fas fa-search"></i>
         </div>
         <div class="searchResults">

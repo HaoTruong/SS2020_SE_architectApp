@@ -53,7 +53,7 @@ html, body, .map {
   }
 
   .searchBar input {
-    width: 200px;
+    width: 300px;
   }
 
   li
@@ -64,17 +64,23 @@ html, body, .map {
   .searchResults
   {
     max-height: 100px;
-    width: 200px;
+    width: 320px;
     overflow-y: auto;
     overflow-x: hidden;
   }
 
   .result
   {
-    border: 2px;
-    width: 200px;
+    border: 2px black;
+    width: 300px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     background-color: whitesmoke;
     border-radius: 2px
+  }
+
+  .result:hover {
+    background-color:  gray;
   }
 
   #categoryFilter {

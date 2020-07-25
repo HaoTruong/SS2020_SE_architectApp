@@ -16,6 +16,24 @@ async function connectToArchitectureData() {
   return table;
 }
 
+async function getArchitectureNames() {
+  mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
+  const table = await Architecture.find({}, 'name', function(err, data){
+    return data;  
+  })
+  mongoose.disconnect();
+  return table;
+}
+
+async function getOneArchitecture(architectureName) {
+  mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
+  const table = await Architecture.find({name: architectureName}, function(err, data){
+    return data;  
+  })
+  mongoose.disconnect();
+  return table;
+}
+
 //Declare a map
 var map = new ol.Map({
     target: 'map',
@@ -89,31 +107,85 @@ function creatingSearchBox() {
   //How 
 }
 
-//Search box click function (show list of entities when user click on search bar)
-function searching() {
-  var elem = $(".result");
-  var i
-  // for (i=0; i<elem.length; i++) {
-  //   $(elem[i]).show();
-  // }
-  // elem[0].innerHTML = "Hello";
-  var table;
-  db.getField('Architectures', directory, 'name', (succ,data) => {
-    var i;
-    table = data;
-    console.log("list of architectures name"+ table);
-    var searchResults = document.getElementsByClassName("searchResults");
-    if (searchResults[0].childElementCount == 0) {
-      for (i in table) {
-        let li = document.createElement('li');
-        li.innerHTML = table[i];
-        li.setAttribute("class", "result");
-        searchResults[0].appendChild(li);
-      }
-    }
-  })
+//Create single pop up menu
+async function createSinglePopUp(name) {
+  const data = await getOneArchitecture(name);
+  var popup = document.getElementsByClassName("ol-popup-closer") 
+  while (popup.length != 0)
+  {
+    $('.ol-popup-closer').parent().parent().remove()
+  }
+  console.log(data);
+  //Create new pop up div
+  var newDiv = document.createElement('div');
+  newDiv.setAttribute("class", "ol-popup");
+  //Create content and closer
+  var newContent = document.createElement('div');
+  var newAnchor = document.createElement('a');
+  newAnchor.href="#";
+  newAnchor.setAttribute("class","ol-popup-closer");
+  newDiv.appendChild(newAnchor);
+  newDiv.appendChild(newContent); 
+  //Create map overlay
+  var overlay = new ol.Overlay({
+    element: newDiv
+  });
+  overlay.setPosition(ol.proj.fromLonLat([data[0].lon,data[0].lat]));
+  var name = data[0].name.toString();
+  newContent.innerHTML = name + "<br>" + data[0].city.toString() + ", " + data[0].state.toString();
+  map.addOverlay(overlay);
 }
 
+//Search box click function (show list of entities when user click on search bar)
+async function searching() {
+  var elem = $(".result");
+  var searchResults = document.getElementsByClassName("searchResults");
+  //Local database
+  // db.getField('default', directory, 'name', (succ,data) => {
+  //   var i;
+  //   table = data;
+  //   console.log("list of architectures name"+ table);
+  //   var searchResults = document.getElementsByClassName("searchResults");
+  //   for (i in table) {
+  //     let li = document.createElement('li');
+  //     li.innerHTML = table[i];
+  //     li.setAttribute("class", "result");
+  //     searchResults[0].appendChild(li);
+  //   }
+  // })
+
+  //MongoDB
+  let table = await getArchitectureNames();
+  if (searchResults[0].childElementCount == 0) {
+    for (i in table) {
+      let li = document.createElement('li');
+      let name = table[i].name;
+      li.innerHTML = name
+      li.setAttribute("class", "result");
+      li.addEventListener('click', function() {
+        createSinglePopUp(name);
+      })
+      searchResults[0].appendChild(li);
+    }
+  }
+}
+
+function searchFilter() {
+  var input = document.getElementById("searchInput");
+  var filter = input.value.toUpperCase();
+  var li = document.getElementsByClassName("result");
+  var i
+
+  for (i = 0; i<li.length; i++) {
+    var textValue = li[i].textContent;
+    if (textValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    }
+    else {
+      li[i].style.display = "none";
+    }
+  }
+}
 //This is testing part for clicking pop up 
 
 // map.on('singleclick', function(evt) {
