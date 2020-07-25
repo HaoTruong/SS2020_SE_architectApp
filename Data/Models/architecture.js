@@ -2,12 +2,26 @@ const mongoose = require('mongoose');
 
 const ArchitectureSchema = mongoose.Schema(
     {
+        id: {
+            type: Number,
+            require: true
+        },
         name: {
             type: String,
             require: true
         },
-        location: {
+        city: {
             type: String,
+            require: true,
+            default: null
+        },
+        state: {
+            type: String,
+            require: true,
+            default: null
+        },
+        architects: {
+            type:  String,
             require: true,
             default: null
         },
@@ -19,9 +33,9 @@ const ArchitectureSchema = mongoose.Schema(
             type:  Number,
             require: true
         }
-    }, 
+    },
     {
-        collection: "Architecture"
+        collection: 'Architecture'
     }
 )
 

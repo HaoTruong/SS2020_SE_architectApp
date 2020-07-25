@@ -58,7 +58,7 @@ async function defaultPopUp(){
   // })
 
   //Adding default pop-up
-  for (i=0; i<table.length;i++){
+  for (i=0; i<2;i++){
     //Create new pop up div
     var newDiv = document.createElement('div');
     newDiv.setAttribute("class", "ol-popup");
@@ -75,7 +75,7 @@ async function defaultPopUp(){
     });
     overlay.setPosition(ol.proj.fromLonLat([table[i].lon,table[i].lat]));
     var name = table[i].name.toString();
-    newContent.innerHTML = name + "<br>" + table[i].location.toString();
+    newContent.innerHTML = name + "<br>" + table[i].city.toString() + ", " + table[i].state.toString();
     map.addOverlay(overlay);
   }
 }
