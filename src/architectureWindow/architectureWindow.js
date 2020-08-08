@@ -28,7 +28,12 @@ function getInfo() {
             document.getElementsByClassName('Information')[0].innerHTML = data[0].info;
         }
         if (data[0].picURL) {
-            document.getElementsByClassName('architectImage')[0].innerHTML = "<img src=\"../../assets/img/"+data[0].picURL+".jpg\">";
+            //document.getElementsByClassName('architectImage')[0].innerHTML = "<img src=\"../../assets/img/"+data[0].picURL+".jpg\">";
+            var space = document.getElementsByClassName('col-lg col-md');
+            image = document.createElement('img');
+            image.setAttribute('class',"architectureImage");
+            image.src = "../../assets/img/"+data[0].picURL+".jpg";
+            space[1].appendChild(image);
         }
     })
     
