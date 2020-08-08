@@ -1,14 +1,17 @@
 const db = require('electron-db');
 const electron = require('electron');
 const path = require('path');
-const directory = path.join(__dirname, '/../Data')
-const app  = electron.app || electron.remote.app;
+const directory = path.join(__dirname, 'data');
+const remote = require('electron').remote;
+const Menu = require('electron').menu;
+var ipcRenderer = require('electron').ipcRenderer
 const mongoose = require('mongoose');
+const Architecture = require('../Data/models/architecture');
 require('dotenv/config');
-const Architecture = require('../Data/Models/architecture');
+const DB_CONNECTION = "mongodb+srv://HT-Admin:Haotruong2@cluster0.fiqy6.mongodb.net/GeoArchitect?retryWrites=true&w=majority";
 //Connect to the database
 async function connectToArchitectureData() {
-  mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
+  mongoose.connect(DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
   const table = await Architecture.find(function(err, data){
     return data;  
   })
@@ -17,7 +20,7 @@ async function connectToArchitectureData() {
 }
 
 async function getArchitectureNames() {
-  mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
+  mongoose.connect(DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
   const table = await Architecture.find({}, 'name', function(err, data){
     return data;  
   })
@@ -26,7 +29,7 @@ async function getArchitectureNames() {
 }
 
 async function getOneArchitecture(architectureName) {
-  mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
+  mongoose.connect(DB_CONNECTION, {useNewUrlParser: true, reconnectTries: 5000})
   const table = await Architecture.find({name: architectureName}, function(err, data){
     return data;  
   })
@@ -34,7 +37,7 @@ async function getOneArchitecture(architectureName) {
   return table;
 }
 
-//Declare a map
+//Create map
 var map = new ol.Map({
     target: 'map',
     layers: [
@@ -48,16 +51,39 @@ var map = new ol.Map({
     })
   });
 
+
+
 //Create search bar
-creatingSearchBox();
+ creatingSearchBox();
 
 //Create default pop up
 defaultPopUp();
 
+//Demo database
+//   const db = require('electron-db');
+//   const { app, BrowserWindow } = require("electron");
+   
+//   const path = require('path')
+ 
+// // This will save the database in the same directory as the application.
+// const loc = path.join(__dirname, 'data')
+ 
+// db.createTable('customers', loc, (succ, msg) => {
+//   // succ - boolean, tells if the call is successful
+//   if (succ) {
+//     console.log(msg)
+//   } else {
+//     console.log('An error has occured. ' + msg)
+//   }
+// })
+ 
+function resetView() {
+  map.getView().setCenter(ol.proj.fromLonLat([-100.642,39.327]));
+  map.getView().setZoom(5);
+}
 
-//Default pop up when the program first started
 async function defaultPopUp(){
-   // const table = await Architecture.find();
+  // const table = await Architecture.find();
   // console.log("Connection closed");
   //console.log(table);
   ///Get default architectures info
@@ -85,6 +111,7 @@ async function defaultPopUp(){
     var newAnchor = document.createElement('a');
     newAnchor.href="#";
     newAnchor.setAttribute("class","ol-popup-closer");
+    newContent.setAttribute("class", "ol-popup-content");
     newDiv.appendChild(newAnchor);
     newDiv.appendChild(newContent); 
     //Create map overlay
@@ -104,7 +131,6 @@ function creatingSearchBox() {
     element: document.getElementById("searchBoxWrapper")
   })
   map.addControl(searchBar);
-  //How 
 }
 
 //Create single pop up menu
@@ -124,6 +150,7 @@ async function createSinglePopUp(name) {
   var newAnchor = document.createElement('a');
   newAnchor.href="#";
   newAnchor.setAttribute("class","ol-popup-closer");
+  newContent.setAttribute("class", "ol-popup-content");
   newDiv.appendChild(newAnchor);
   newDiv.appendChild(newContent); 
   //Create map overlay
@@ -134,6 +161,8 @@ async function createSinglePopUp(name) {
   var name = data[0].name.toString();
   newContent.innerHTML = name + "<br>" + data[0].city.toString() + ", " + data[0].state.toString();
   map.addOverlay(overlay);
+  map.getView().setCenter(ol.proj.fromLonLat([data[0].lon, data[0].lat]))
+  map.getView().setZoom(7);
 }
 
 //Search box click function (show list of entities when user click on search bar)
@@ -186,16 +215,53 @@ function searchFilter() {
     }
   }
 }
-//This is testing part for clicking pop up 
 
-// map.on('singleclick', function(evt) {
-//   var coordinate = evt.coordinate;
-//   var hdms = ol.coordinate.toStringHDMS(ol.proj.toLonLat(coordinate));
-//   // var hdms = toStringHDMS(toLonLat(coordinate));
-  
-//   newContent.innerHTML = '<p>You clicked here:</p><code>' + hdms +
-//       '</code>';
-//   overlay.setPosition(coordinate);
-//   map.addOverlay(overlay);
-// });
+async function openArchitectureWindow(architectureName) {
+  ipcRenderer.send('show-architectureWindow', architectureName);
+}
 
+ipcRenderer.on('hello', function() {
+  console.log("HWEKLAJL:DJAS");
+})
+
+//Testing part
+map.on('singleclick', function(evt) {
+  var coordinate = evt.coordinate;
+  console.log(ol.proj.toLonLat(coordinate));
+})
+
+
+
+
+//Updater 
+
+const version = document.getElementById('version');
+    
+    ipcRenderer.send('app_version');
+    ipcRenderer.on('app_version', (event, arg) => {
+      ipcRenderer.removeAllListeners('app_version');
+      version.innerText = 'Version ' + arg.version;
+    });
+
+    
+const notification = document.getElementById('notification');
+const message = document.getElementById('message');
+const restartButton = document.getElementById('restart-button');
+ipcRenderer.on('update_available', () => {
+  ipcRenderer.removeAllListeners('update_available');
+  message.innerText = 'A new update is available. Downloading now...';
+  notification.classList.remove('hidden');
+});
+ipcRenderer.on('update_downloaded', () => {
+  ipcRenderer.removeAllListeners('update_downloaded');
+  message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
+  restartButton.classList.remove('hidden');
+  notification.classList.remove('hidden');
+});
+
+function closeNotification() {
+  notification.classList.add('hidden');
+}
+function restartApp() {
+  ipcRenderer.send('restart_app');
+}
