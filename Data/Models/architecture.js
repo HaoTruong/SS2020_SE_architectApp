@@ -32,6 +32,18 @@ const ArchitectureSchema = mongoose.Schema(
         lat: {
             type:  Number,
             require: true
+        },
+        info: {
+            type:String,
+            require: false
+        },
+        picURL: {
+            type: String, 
+            require: false
+        },
+        dateOpened: {
+            type: String,   
+            require: false
         }
     },
     {

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" /> -->
+    <link rel="stylesheet" href="smallWindowStyle.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
+  </head>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+
+
+  </head>
+  <body onload="getInfo();">
+    <div class="container-fluid title">
+      <h1 class="text-center architectName"></h1>
+    </div>
+    <div class="row">
+      <div class="col-lg col-md">
+        <h2>Author</h2>
+        <p class="Author"></p>
+        <h2>Location</h2>
+        <p class="Location"></p>
+        <h2>Date Opened</h2> 
+        <p class="Date"></p>
+        <h2>Information</h2>
+        <p class="Information"></p>
+      </div>
+      <div class="col-lg col-md">
+        <div class="architectImage"></div>
+      </div>
+    </div>
+    <script src="architectureWindow.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  </body>
+</html>

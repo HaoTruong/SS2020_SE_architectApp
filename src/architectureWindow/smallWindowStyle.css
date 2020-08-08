@@ -1,0 +1,17 @@
+html, body, .map {
+    width: 100%;
+    height:100%;
+    overflow-x: hidden;
+  }
+
+.title {
+  background-color: darkgrey;
+}
+h2 {
+    font-size: 24px !important;
+    padding-bottom: 10px;
+}
+
+.architectImage {
+  max-width: 100%;
+}

@@ -3,7 +3,7 @@ const {
 	BrowserWindow,
 	Menu
 } = require('electron')
-
+var ipcMain = require('electron').ipcMain
 //Toggle this one when app is in prod
 //process.env.NODE_ENV = 'production';
 
@@ -110,3 +110,36 @@ app.on('activate', () => {
 		createWindow()
 	}
 })
+
+ipcMain.on('show-architectureWindow', function(e, arg) {
+	openArchitectureWindow(arg);
+})
+
+var architectureWindow = null;
+function openArchitectureWindow(architectureName) {
+	if (architectureWindow)
+	{
+		architectureWindow.focus()
+		return
+	}
+	architectureWindow = new BrowserWindow({
+		height: 1000,
+		resizable: false,
+		width: 800,
+		title: architectureName,
+		minimizable: true,
+		fullscreenable: false,
+		webPreferences: {
+			nodeIntegration: true
+		}
+	})
+	architectureWindow.loadFile('src/architectureWindow/architectureWindow.html');
+
+	architectureWindow.on('closed', function() {
+		architectureWindow = null;
+	})
+	console.log(architectureWindow.webContents.getProcessId());
+	architectureWindow.webContents.on('did-finish-load', ()=> {
+		architectureWindow.webContents.send('send-architectureName', architectureName);
+	})
+}
